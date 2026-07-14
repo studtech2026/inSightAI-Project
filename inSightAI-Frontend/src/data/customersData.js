@@ -1,0 +1,42 @@
+export const customers = [
+  {
+    id: 1,
+    name: "Chenna Vikas",
+    email: "vikas@example.com",
+    orders: 15,
+    spent: "₹48,500",
+    status: "Active",
+  },
+  {
+    id: 2,
+    name: "Prem Baliwala",
+    email: "prem@example.com",
+    orders: 9,
+    spent: "₹21,300",
+    status: "Active",
+  },
+  {
+    id: 3,
+    name: "Raj Maheta",
+    email: "raj@example.com",
+    orders: 2,
+    spent: "₹5,200",
+    status: "Inactive",
+  },
+  {
+    id: 4,
+    name: "Aryan Pagadal",
+    email: "aryan@example.com",
+    orders: 28,
+    spent: "₹93,700",
+    status: "Active",
+  },
+  {
+    id: 5,
+    name: "Meet Chandel",
+    email: "meet@example.com",
+    orders: 25,
+    spent: "₹67,6700",
+    status: "Active",
+  },
+];
