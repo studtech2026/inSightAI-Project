@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/authRoutes.js";
+import uploadRoutes from "./routes/uploadRoutes.js";
 
 import notFound from "./middleware/notFound.js";
 import errorHandler from "./middleware/errorHandler.js";
@@ -51,6 +52,8 @@ app.get("/", (req, res) => {
 */
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/uploads", uploadRoutes);
 
 /*
 |--------------------------------------------------------------------------
