@@ -5,6 +5,9 @@ import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/authRoutes.js";
 
+import notFound from "./middleware/notFound.js";
+import errorHandler from "./middleware/errorHandler.js";
+
 dotenv.config();
 
 const app = express();
@@ -55,11 +58,14 @@ app.use("/api/auth", authRoutes);
 |--------------------------------------------------------------------------
 */
 
-app.use((req, res) => {
-  return res.status(404).json({
-    success: false,
-    message: "API Route Not Found",
-  });
-});
+app.use(notFound);
+
+/*
+|--------------------------------------------------------------------------
+| Global Error Handler
+|--------------------------------------------------------------------------
+*/
+
+app.use(errorHandler);
 
 export default app;
