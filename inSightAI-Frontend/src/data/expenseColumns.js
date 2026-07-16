@@ -14,7 +14,6 @@ export const expenseColumns = [
   {
     key: "payment",
     label: "Payment",
-    type: "status",
   },
   {
     key: "actions",

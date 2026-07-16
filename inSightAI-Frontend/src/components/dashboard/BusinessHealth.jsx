@@ -6,28 +6,32 @@ import {
 
 import Card from "../common/Card";
 
-const metrics = [
-  {
-    title: "Business Score",
-    value: "92%",
-    icon: CheckCircle2,
-    color: "text-green-500",
-  },
-  {
-    title: "Growth",
-    value: "+18%",
-    icon: TrendingUp,
-    color: "text-violet-500",
-  },
-  {
-    title: "Performance",
-    value: "Excellent",
-    icon: Activity,
-    color: "text-blue-500",
-  },
-];
+export default function BusinessHealth({
+  health,
+}) {
+  if (!health) return null;
 
-export default function BusinessHealth() {
+  const metrics = [
+    {
+      title: "Business Score",
+      value: `${health.score}%`,
+      icon: CheckCircle2,
+      color: "text-green-500",
+    },
+    {
+      title: "Growth",
+      value: `+${health.growth}%`,
+      icon: TrendingUp,
+      color: "text-violet-500",
+    },
+    {
+      title: "Performance",
+      value: health.status,
+      icon: Activity,
+      color: "text-blue-500",
+    },
+  ];
+
   return (
     <Card hover={false}>
       <h2 className="text-xl font-semibold text-main">

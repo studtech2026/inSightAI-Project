@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { generateResponse } from "../utils/mockAIResponses";
 
-const STORAGE_KEY = "insightai-chat";
+import aiService from "../services/aiService";
+
+import { showError, showSuccess } from "../utils/toast";
 
 let id = Date.now();
 
@@ -11,60 +12,79 @@ const getCurrentTime = () =>
     minute: "2-digit",
   });
 
-const getInitialMessages = () => {
-  const saved = localStorage.getItem(STORAGE_KEY);
-
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch {
-      localStorage.removeItem(STORAGE_KEY);
-    }
-  }
-
-  return [
-    {
-      id: 1,
-      sender: "assistant",
-      time: getCurrentTime(),
-      text: `👋 Hello!
+const welcomeMessage = {
+  id: 1,
+  sender: "assistant",
+  time: getCurrentTime(),
+  text: `👋 Hello!
 
 I'm InsightAI.
 
-I can help you analyze:
+I can help you with:
 
-• Revenue
-• Sales
-• Inventory
-• Customers
-• Expenses
-• Forecasts
-• Business KPIs
+• Revenue Analysis
+• Sales Insights
+• Expense Tracking
+• Inventory Management
+• Customer Analytics
+• Reports
+• Forecasting
 
 How can I help today?`,
-    },
-  ];
 };
 
 export default function useChat() {
-  const [messages, setMessages] = useState(getInitialMessages);
+  const [messages, setMessages] = useState([welcomeMessage]);
 
   const [typing, setTyping] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(messages)
-    );
-  }, [messages]);
+    loadHistory();
+  }, []);
 
-  const sendMessage = (text) => {
+  const loadHistory = async () => {
+    try {
+      const response = await aiService.getChatHistory();
+
+      if (!response.data.length) return;
+
+      const history = [];
+
+      response.data.forEach((chat) => {
+        history.push({
+          id: id++,
+          sender: "user",
+          text: chat.question,
+          time: new Date(chat.createdAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        });
+
+        history.push({
+          id: id++,
+          sender: "assistant",
+          text: chat.answer,
+          time: new Date(chat.createdAt).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        });
+      });
+
+      setMessages([welcomeMessage, ...history]);
+    } catch {
+      showError("Unable to load chat history.");
+    }
+  };
+
+  const sendMessage = async (text) => {
     if (!text.trim()) return;
 
     const userMessage = {
       id: id++,
       sender: "user",
-      text: text.trim(),
+      text,
       time: getCurrentTime(),
     };
 
@@ -72,56 +92,65 @@ export default function useChat() {
 
     setTyping(true);
 
-    setTimeout(() => {
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
+
+    try {
+      const response = await aiService.sendMessage(text);
+
       const aiMessage = {
         id: id++,
         sender: "assistant",
-        text: generateResponse(text),
+        text: response.data.answer,
         time: getCurrentTime(),
       };
 
       setMessages((prev) => [...prev, aiMessage]);
-
+    } catch {
+      showError("Failed to generate AI response.");
+    } finally {
       setTyping(false);
-    }, 1200);
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth",
+      });
+    }
   };
 
-  const clearChat = () => {
-    if (!window.confirm("Clear the entire conversation?")) {
-      return;
+  const clearChat = async () => {
+    const clearChat = async () => {
+      try {
+        await aiService.clearChatHistory();
+
+        showSuccess("Conversation cleared.");
+
+        setMessages([welcomeMessage]);
+      } catch {
+        showError("Unable to clear conversation.");
+      }
+    };
+
+    try {
+      await aiService.clearChatHistory();
+
+      showSuccess("Chat cleared.");
+
+      setMessages([welcomeMessage]);
+    } catch {
+      showError("Unable to clear chat.");
     }
-
-    const welcome = [
-      {
-        id: Date.now(),
-        sender: "assistant",
-        time: getCurrentTime(),
-        text: `👋 Hello!
-
-I'm InsightAI.
-
-Ask me anything about your business.
-
-Examples:
-
-• Revenue Analysis
-• Inventory Report
-• Customer Insights
-• Expense Report
-• Forecast`,
-      },
-    ];
-
-    localStorage.removeItem(STORAGE_KEY);
-
-    setMessages(welcome);
   };
 
   const exportChat = () => {
     const content = messages
       .map(
         (msg) =>
-          `[${msg.time}] ${msg.sender.toUpperCase()}\n${msg.text}\n`
+          `[${msg.time}] ${msg.sender.toUpperCase()}
+
+${msg.text}
+`,
       )
       .join("\n");
 

@@ -10,6 +10,7 @@ import {
   Bot,
   FileText,
   Settings,
+  Bell,
 } from "lucide-react";
 
 export const sidebarLinks = [
@@ -62,6 +63,11 @@ export const sidebarLinks = [
     title: "Reports",
     path: "/reports",
     icon: FileText,
+  },
+   {
+    title: "Notifications",
+    path: "/notifications",
+    icon: Bell,
   },
   {
     title: "Settings",

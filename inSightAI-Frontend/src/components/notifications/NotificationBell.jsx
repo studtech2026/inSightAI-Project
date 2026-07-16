@@ -76,7 +76,10 @@ export default function NotificationBell() {
 
       {open && (
         <div className="absolute right-0 mt-3 z-50">
-          <NotificationDropdown notifications={notifications} />
+          <NotificationDropdown
+            notifications={notifications}
+            onClose={closeDropdown}
+          />
 
           <div
             className="

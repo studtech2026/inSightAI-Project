@@ -41,33 +41,9 @@ export default function ProfileMenu({ closeMenu }) {
         shadow-app
       "
     >
-      {/* Profile */}
-      <button
-        onClick={closeMenu}
-        className="
-          flex
-          w-full
-          items-center
-          gap-3
-          px-5
-          py-3
-          text-left
-          text-main
-          transition
-          hover:bg-card-hover
-        "
-      >
-        <User
-          size={18}
-          className="text-violet-500"
-        />
-
-        <span>My Profile</span>
-      </button>
-
       {/* Settings */}
       <button
-        onClick={closeMenu}
+        onClick={()=>{closeMenu(); navigate("settings")}}
         className="
           flex
           w-full

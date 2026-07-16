@@ -1,51 +1,60 @@
+import { useState } from "react";
+
 import PageHeader from "../../components/common/PageHeader";
 
 import ChatWindow from "../../components/assistant/ChatWindow";
 import ChatHeader from "../../components/assistant/ChatHeader";
 import ChatMessages from "../../components/assistant/ChatMessages";
 import ChatInput from "../../components/assistant/ChatInput";
-import SuggestedPrompts from "../../components/assistant/SuggestedPrompts";
+import WelcomeScreen from "../../components/assistant/WelcomeScreen";
+import ConfirmModal from "../../components/common/ConfirmModal";
 
 import useChat from "../../hooks/useChat";
 
 export default function AIAssistant() {
-  const {
-    messages,
-    typing,
-    sendMessage,
-    clearChat,
-    exportChat,
-  } = useChat();
+  const { messages, typing, sendMessage, clearChat, exportChat } = useChat();
+
+  const [openClearModal, setOpenClearModal] = useState(false);
+
+  const handleClear = async () => {
+    await clearChat();
+
+    setOpenClearModal(false);
+  };
 
   return (
     <div className="space-y-8">
       <PageHeader
-        title="AI Assistant"
-        subtitle="Ask business questions and receive AI-powered insights."
+        title="AI Business Assistant"
+        subtitle="Ask questions about your business and receive intelligent insights."
       />
 
       <ChatWindow>
         <ChatHeader
-          clearChat={clearChat}
           exportChat={exportChat}
+          clearChat={() => setOpenClearModal(true)}
         />
 
-        {messages.length <= 1 && (
-          <SuggestedPrompts
-            onSelect={sendMessage}
-          />
-        )}
+        <div className="flex-1 overflow-y-auto p-6">
+          {messages.length <= 1 ? (
+            <WelcomeScreen onSelect={sendMessage} />
+          ) : (
+            <ChatMessages messages={messages} typing={typing} />
+          )}
+        </div>
 
-        <ChatMessages
-          messages={messages}
-          typing={typing}
-          onPromptSelect={sendMessage}
-        />
-
-        <ChatInput
-          onSend={sendMessage}
-        />
+        <ChatInput onSend={sendMessage} typing={typing} />
       </ChatWindow>
+
+      <ConfirmModal
+        open={openClearModal}
+        title="Clear Conversation"
+        message="Are you sure you want to clear the entire conversation? This action cannot be undone."
+        confirmText="Clear Chat"
+        confirmColor="red"
+        onClose={() => setOpenClearModal(false)}
+        onConfirm={handleClear}
+      />
     </div>
   );
 }

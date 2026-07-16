@@ -3,9 +3,9 @@ const TOKEN_KEY = "token";
 
 /* ---------------- Login ---------------- */
 
-export function login(user) {
+export function login(user, token) {
   localStorage.setItem(USER_KEY, JSON.stringify(user));
-  localStorage.setItem(TOKEN_KEY, "mock-token");
+  localStorage.setItem(TOKEN_KEY, token);
 }
 
 /* ---------------- Logout ---------------- */
@@ -23,8 +23,14 @@ export function getCurrentUser() {
   return user ? JSON.parse(user) : null;
 }
 
+/* ---------------- Get Token ---------------- */
+
+export function getToken() {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
 /* ---------------- Auth Check ---------------- */
 
 export function isAuthenticated() {
-  return !!localStorage.getItem(TOKEN_KEY);
+  return !!getToken();
 }

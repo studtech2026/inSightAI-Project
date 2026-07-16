@@ -1,56 +1,25 @@
+import { Bot, User, Copy, Check } from "lucide-react";
 import { useState } from "react";
-import { motion } from "framer-motion";
-import {
-  Bot,
-  User,
-  Copy,
-  Check,
-} from "lucide-react";
-import toast from "react-hot-toast";
 
-export default function ChatMessage({
-  message,
-}) {
+export default function ChatMessage({ message }) {
+  const isUser = message.sender === "user";
+
   const [copied, setCopied] = useState(false);
 
-  const isUser =
-    message.sender === "user";
+  const copyMessage = async () => {
+    await navigator.clipboard.writeText(message.text);
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(
-        message.text
-      );
+    setCopied(true);
 
-      setCopied(true);
-
-      toast.success("Copied to clipboard");
-
-      setTimeout(() => {
-        setCopied(false);
-      }, 1500);
-    } catch {
-      toast.error("Unable to copy");
-    }
+    setTimeout(() => {
+      setCopied(false);
+    }, 1500);
   };
 
   return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        y: 20,
-      }}
-      animate={{
-        opacity: 1,
-        y: 0,
-      }}
-      transition={{
-        duration: 0.25,
-      }}
-      className={`flex gap-3 ${
-        isUser
-          ? "justify-end"
-          : "justify-start"
+    <div
+      className={`flex gap-4 ${
+        isUser ? "justify-end" : "justify-start"
       }`}
     >
       {!isUser && (
@@ -62,65 +31,75 @@ export default function ChatMessage({
             shrink-0
             items-center
             justify-center
-            rounded-xl
+            rounded-full
             bg-gradient-to-br
             from-violet-600
             to-blue-600
+            text-white
             shadow-lg
           "
         >
-          <Bot
-            size={20}
-            className="text-white"
-          />
+          <Bot size={20} />
         </div>
       )}
 
       <div
-        className={`flex max-w-[80%] flex-col ${
-          isUser
-            ? "items-end"
-            : "items-start"
-        }`}
-      >
-        <div
-          className={`rounded-2xl px-5 py-4 leading-7 whitespace-pre-wrap shadow-sm ${
+        className={`
+          group
+          relative
+          max-w-[75%]
+          rounded-2xl
+          px-5
+          py-4
+          shadow-sm
+          transition
+          ${
             isUser
               ? "rounded-br-md bg-violet-600 text-white"
-              : "rounded-bl-md border border-app bg-surface text-main"
-          }`}
-        >
-          {message.text}
-        </div>
+              : "rounded-bl-md border border-app bg-card text-main"
+          }
+        `}
+      >
+        {!isUser && (
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-violet-500">
+            InsightAI
+          </p>
+        )}
 
-        <div className="mt-2 flex items-center gap-3 px-2">
-          <span className="text-xs text-secondary">
+        <p className="whitespace-pre-wrap leading-7">
+          {message.text}
+        </p>
+
+        <div className="mt-4 flex items-center justify-between">
+          <span
+            className={`text-xs ${
+              isUser
+                ? "text-violet-100"
+                : "text-secondary"
+            }`}
+          >
             {message.time}
           </span>
 
           {!isUser && (
             <button
-              onClick={handleCopy}
+              onClick={copyMessage}
               className="
-                flex
-                items-center
-                gap-1
-                text-xs
-                text-secondary
+                opacity-0
                 transition
-                hover:text-violet-500
+                group-hover:opacity-100
               "
             >
               {copied ? (
-                <>
-                  <Check size={14} />
-                  Copied
-                </>
+                <Check
+                  size={16}
+                  className="text-green-500"
+                />
               ) : (
-                <>
-                  <Copy size={14} />
-                  Copy
-                </>
+                <Copy
+                  size={16}
+                  className="text-secondary"
+                />
               )}
             </button>
           )}
@@ -136,18 +115,15 @@ export default function ChatMessage({
             shrink-0
             items-center
             justify-center
-            rounded-xl
-            bg-surface
-            border
-            border-app
+            rounded-full
+            bg-blue-600
+            text-white
+            shadow-lg
           "
         >
-          <User
-            size={20}
-            className="text-main"
-          />
+          <User size={20} />
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }

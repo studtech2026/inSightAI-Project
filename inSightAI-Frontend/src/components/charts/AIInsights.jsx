@@ -2,47 +2,65 @@ import {
   TrendingUp,
   AlertTriangle,
   BrainCircuit,
+  Info,
 } from "lucide-react";
 
 import ChartContainer from "./ChartContainer";
 
-const insights = [
+const iconMap = {
+  success: TrendingUp,
+  warning: AlertTriangle,
+  info: BrainCircuit,
+};
+
+const colorMap = {
+  success: "text-green-500",
+  warning: "text-yellow-500",
+  info: "text-violet-500",
+};
+
+const defaultInsights = [
   {
-    icon: TrendingUp,
-    color: "text-green-500",
+    type: "success",
     title: "Revenue Increased",
     description:
       "Revenue increased by 12% compared to last month.",
   },
   {
-    icon: AlertTriangle,
-    color: "text-yellow-500",
+    type: "warning",
     title: "Inventory Alert",
     description:
       "Product X inventory is running low.",
   },
   {
-    icon: BrainCircuit,
-    color: "text-violet-500",
+    type: "info",
     title: "AI Recommendation",
     description:
       "Increase marketing budget by 8% for maximum ROI.",
   },
 ];
 
-export default function AIInsights() {
+export default function AIInsights({
+  insights = [],
+}) {
+  const data =
+    insights.length > 0
+      ? insights
+      : defaultInsights;
+
   return (
     <ChartContainer
       title="AI Insights"
       subtitle="Latest business recommendations"
     >
       <div className="space-y-6">
-        {insights.map((item) => {
-          const Icon = item.icon;
+        {data.map((item, index) => {
+          const Icon =
+            iconMap[item.type] || Info;
 
           return (
             <div
-              key={item.title}
+              key={index}
               className="
                 flex
                 gap-4
@@ -67,7 +85,10 @@ export default function AIInsights() {
                 "
               >
                 <Icon
-                  className={item.color}
+                  className={
+                    colorMap[item.type] ||
+                    "text-violet-500"
+                  }
                   size={22}
                 />
               </div>

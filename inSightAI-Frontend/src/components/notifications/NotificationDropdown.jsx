@@ -1,8 +1,8 @@
 import NotificationList from "./NotificationList";
+import { useNavigate } from "react-router-dom";
 
-export default function NotificationDropdown({
-  notifications = [],
-}) {
+export default function NotificationDropdown({ notifications = [], onClose }) {
+  const navigate = useNavigate();
   return (
     <div
       className="
@@ -31,39 +31,34 @@ export default function NotificationDropdown({
           py-4
         "
       >
-        <h3 className="text-lg font-semibold text-main">
-          Notifications
-        </h3>
+        <h3 className="text-lg font-semibold text-main">Notifications</h3>
 
         <span className="text-xs text-secondary">
-          {
-            notifications.filter(
-              (item) => !item.read
-            ).length
-          }{" "}
-          unread
+          {notifications.filter((item) => !item.read).length} unread
         </span>
       </div>
 
       <div className="max-h-96 overflow-y-auto">
-        <NotificationList
-          notifications={notifications}
-        />
+        <NotificationList notifications={notifications} />
       </div>
 
       <button
+        onClick={() => {
+          onClose();
+          navigate("/notifications");
+        }}
         className="
-          w-full
-          border-t
-          border-app
-          py-3
-          text-center
-          text-sm
-          font-medium
-          text-violet-500
-          transition
-          hover:bg-card-hover
-        "
+    w-full
+    border-t
+    border-app
+    py-3
+    text-center
+    text-sm
+    font-medium
+    text-violet-500
+    transition
+    hover:bg-card-hover
+  "
       >
         View All Notifications
       </button>

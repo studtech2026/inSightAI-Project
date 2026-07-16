@@ -7,10 +7,8 @@ import AuthInput from "./AuthInput";
 import PasswordInput from "./PasswordInput";
 import AuthButton from "./AuthButton";
 
+import authService from "../../services/authService";
 import { login } from "../../utils/auth";
-
-import { mockUser } from "../../data/userData";
-import { mockCredentials } from "../../data/authData";
 
 import {
   showSuccess,
@@ -36,7 +34,7 @@ export default function LoginForm() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!form.email.trim()) {
@@ -49,34 +47,31 @@ export default function LoginForm() {
       return;
     }
 
-    if (
-      form.email !==
-        mockCredentials.email ||
-      form.password !==
-        mockCredentials.password
-    ) {
-      showError(
-        "Invalid email or password."
+    try {
+      setLoading(true);
+
+      const result =
+        await authService.login(form);
+
+      login(
+        result.data.user,
+        result.data.token
       );
-      return;
-    }
-
-    setLoading(true);
-
-    setTimeout(() => {
-      login({
-        ...mockUser,
-        email: form.email,
-      });
-
-      setLoading(false);
 
       showSuccess(
-        "Login successful!"
+        result.message ||
+          "Login successful."
       );
 
       navigate("/dashboard");
-    }, 1000);
+    } catch (error) {
+      showError(
+        error.response?.data?.message ||
+          "Login failed."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

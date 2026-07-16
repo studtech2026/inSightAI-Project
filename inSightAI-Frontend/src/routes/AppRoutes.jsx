@@ -18,6 +18,7 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 
 import ProtectedRoute from "./ProtectedRoute";
+import Notifications from "../pages/Notifications/Notifications";
 
 export default function AppRoutes() {
   return (
@@ -45,7 +46,9 @@ export default function AppRoutes() {
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/assistant" element={<AIAssistant />} />
           <Route path="/reports" element={<Reports />} />
+          <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />
+
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

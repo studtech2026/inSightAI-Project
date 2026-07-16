@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
 import {
   Bot,
-  Sparkles,
   TrendingUp,
   Package,
   DollarSign,
   Users,
+  BarChart3,
+  FileText,
+  Brain,
 } from "lucide-react";
 
 const prompts = [
@@ -29,6 +31,21 @@ const prompts = [
     title: "Customer Insights",
     prompt: "Show customer insights",
   },
+  {
+    icon: BarChart3,
+    title: "Business Analytics",
+    prompt: "Show business analytics",
+  },
+  {
+    icon: FileText,
+    title: "Generate Reports",
+    prompt: "Generate reports",
+  },
+  {
+    icon: Brain,
+    title: "Business Forecast",
+    prompt: "Predict next month's revenue",
+  },
 ];
 
 export default function WelcomeScreen({
@@ -38,30 +55,27 @@ export default function WelcomeScreen({
     <motion.div
       initial={{
         opacity: 0,
-        scale: 0.96,
+        y: 20,
       }}
       animate={{
         opacity: 1,
-        scale: 1,
-      }}
-      transition={{
-        duration: 0.35,
+        y: 0,
       }}
       className="
         flex
+        flex-1
         flex-col
         items-center
         justify-center
-        px-6
-        py-12
-        text-center
+        px-8
+        py-10
       "
     >
       <div
         className="
           flex
-          h-20
-          w-20
+          h-24
+          w-24
           items-center
           justify-center
           rounded-full
@@ -72,27 +86,21 @@ export default function WelcomeScreen({
         "
       >
         <Bot
-          size={38}
+          size={42}
           className="text-white"
         />
       </div>
 
-      <div className="mt-6 flex items-center gap-2">
-        <h2 className="text-3xl font-bold text-main">
-          Welcome to InsightAI
-        </h2>
+      <h2 className="mt-6 text-3xl font-bold text-main">
+        Welcome to InsightAI
+      </h2>
 
-        <Sparkles
-          size={22}
-          className="text-violet-500"
-        />
-      </div>
-
-      <p className="mt-3 max-w-2xl text-secondary">
-        Your AI-powered Business Intelligence Assistant.
-        Ask questions about revenue, expenses,
-        inventory, customers and forecasts to
-        receive intelligent business insights.
+      <p className="mt-3 max-w-2xl text-center text-secondary">
+        Your Business Intelligence Assistant.
+        Ask questions about sales,
+        customers, inventory,
+        reports, forecasts and
+        business performance.
       </p>
 
       <div
@@ -100,10 +108,11 @@ export default function WelcomeScreen({
           mt-10
           grid
           w-full
-          max-w-3xl
+          max-w-5xl
           grid-cols-1
           gap-4
           md:grid-cols-2
+          xl:grid-cols-3
         "
       >
         {prompts.map((item) => {
@@ -116,25 +125,24 @@ export default function WelcomeScreen({
                 onSelect(item.prompt)
               }
               className="
-                flex
-                items-center
-                gap-4
                 rounded-2xl
                 border
                 border-app
                 bg-surface
                 p-5
                 text-left
-                transition
-                hover:bg-card-hover
+                transition-all
+                hover:-translate-y-1
+                hover:border-violet-500
+                hover:shadow-lg
               "
             >
               <div
                 className="
+                  mb-4
                   flex
                   h-12
                   w-12
-                  shrink-0
                   items-center
                   justify-center
                   rounded-xl
@@ -147,25 +155,22 @@ export default function WelcomeScreen({
                 />
               </div>
 
-              <div>
-                <h3 className="font-semibold text-main">
-                  {item.title}
-                </h3>
+              <h3 className="font-semibold text-main">
+                {item.title}
+              </h3>
 
-                <p className="mt-1 text-sm text-secondary">
-                  Click to ask InsightAI
-                </p>
-              </div>
+              <p className="mt-2 text-sm text-secondary">
+                Click to ask InsightAI
+              </p>
             </button>
           );
         })}
       </div>
 
       <p className="mt-10 text-sm text-secondary">
-        Try asking:
-        <span className="text-violet-500">
-          {" "}
-          "How can I increase my profit?"
+        Example:
+        <span className="ml-2 text-violet-500">
+          "How can I increase my sales?"
         </span>
       </p>
     </motion.div>

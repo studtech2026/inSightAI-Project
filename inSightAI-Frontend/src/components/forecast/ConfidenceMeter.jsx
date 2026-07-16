@@ -1,6 +1,8 @@
 import Card from "../common/Card";
 
-export default function ConfidenceMeter() {
+export default function ConfidenceMeter({
+  confidence = 94,
+}) {
   return (
     <Card hover={false}>
       <h2 className="mb-6 text-xl font-semibold text-main">
@@ -23,7 +25,7 @@ export default function ConfidenceMeter() {
         >
           <div className="text-center">
             <h2 className="text-5xl font-bold text-main">
-              94%
+              {confidence}%
             </h2>
 
             <p className="mt-2 text-secondary">

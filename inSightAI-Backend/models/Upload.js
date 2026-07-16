@@ -25,6 +25,16 @@ const uploadSchema = new mongoose.Schema(
       required: true,
     },
 
+    previewPath: {
+      type: String,
+      default: "",
+    },
+
+    statsPath: {
+      type: String,
+      default: "",
+    },
+
     fileType: {
       type: String,
       enum: ["csv", "xlsx", "xls"],
@@ -48,7 +58,12 @@ const uploadSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["uploaded", "processing", "completed", "failed"],
+      enum: [
+        "uploaded",
+        "processing",
+        "completed",
+        "failed",
+      ],
       default: "uploaded",
     },
   },
@@ -57,6 +72,9 @@ const uploadSchema = new mongoose.Schema(
   }
 );
 
-const Upload = mongoose.model("Upload", uploadSchema);
+const Upload = mongoose.model(
+  "Upload",
+  uploadSchema
+);
 
 export default Upload;

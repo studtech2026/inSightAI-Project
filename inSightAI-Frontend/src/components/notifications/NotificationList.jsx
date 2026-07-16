@@ -22,7 +22,7 @@ export default function NotificationList({
     <div className="divide-y divide-[var(--border)]">
       {notifications.map((notification) => (
         <NotificationItem
-          key={notification.id}
+          key={notification._id || notification.id}
           notification={notification}
         />
       ))}

@@ -4,6 +4,8 @@ import Upload from "../models/Upload.js";
 import ApiError from "../utils/ApiError.js";
 import parseFile from "../utils/fileParser.js";
 
+import activityService from "./activityService.js";
+
 class UploadService {
   /**
    * Upload and Parse File
@@ -13,7 +15,31 @@ class UploadService {
       throw new ApiError(400, "Please upload a file.");
     }
 
+    const fs = await import("fs");
+    const pathModule = await import("path");
+
     const parsedFile = await parseFile(file.path);
+
+    const previewPath = file.path + ".preview.json";
+
+    const statsPath = file.path + ".stats.json";
+
+    fs.default.writeFileSync(
+      previewPath,
+      JSON.stringify(parsedFile.data.slice(0, 20), null, 2),
+    );
+
+    fs.default.writeFileSync(
+      statsPath,
+      JSON.stringify(
+        {
+          totalRows: parsedFile.totalRows,
+          totalColumns: parsedFile.totalColumns,
+        },
+        null,
+        2,
+      ),
+    );
 
     const upload = await Upload.create({
       userId,
@@ -23,6 +49,10 @@ class UploadService {
       filename: file.filename,
 
       filePath: file.path,
+
+      previewPath,
+
+      statsPath,
 
       fileType: path.extname(file.originalname).replace(".", ""),
 
@@ -35,18 +65,14 @@ class UploadService {
       status: "completed",
     });
 
+    await activityService.addActivity(userId, {
+      title: "File Uploaded",
+      description: file.originalname,
+      type: "upload",
+    });
+
     return {
-      upload: {
-        id: upload._id,
-        originalName: upload.originalName,
-        filename: upload.filename,
-        fileType: upload.fileType,
-        fileSize: upload.fileSize,
-        totalRows: upload.totalRows,
-        totalColumns: upload.totalColumns,
-        status: upload.status,
-        createdAt: upload.createdAt,
-      },
+      upload,
 
       preview: parsedFile.data.slice(0, 20),
     };
@@ -66,7 +92,12 @@ class UploadService {
   /**
    * Get Upload By ID
    */
+  /**
+   * Get Upload By ID
+   */
   async getUploadById(uploadId, userId) {
+    const fs = await import("fs");
+
     const upload = await Upload.findOne({
       _id: uploadId,
       userId,
@@ -76,7 +107,24 @@ class UploadService {
       throw new ApiError(404, "Upload not found.");
     }
 
-    return upload;
+    let preview = [];
+    let statistics = {};
+
+    if (upload.previewPath && fs.default.existsSync(upload.previewPath)) {
+      preview = JSON.parse(fs.default.readFileSync(upload.previewPath, "utf8"));
+    }
+
+    if (upload.statsPath && fs.default.existsSync(upload.statsPath)) {
+      statistics = JSON.parse(
+        fs.default.readFileSync(upload.statsPath, "utf8"),
+      );
+    }
+
+    return {
+      upload,
+      preview,
+      statistics,
+    };
   }
 
   /**
@@ -93,6 +141,12 @@ class UploadService {
     }
 
     await upload.deleteOne();
+
+    await activityService.addActivity(userId, {
+      title: "File Deleted",
+      description: upload.originalName,
+      type: "upload",
+    });
 
     return null;
   }

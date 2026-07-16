@@ -1,31 +1,15 @@
 import StatusBadge from "./StatusBadge";
 import ActionButtons from "./ActionButtons";
 
-export default function TableRow({
-  row,
-  columns,
-}) {
+export default function TableRow({ row, columns }) {
   return (
-    <tr
-      className="
-        border-b
-        border-app
-        transition
-        hover:bg-card-hover
-      "
-    >
+    <tr className="border-b border-app transition hover:bg-card-hover">
       {columns.map((column) => {
         if (column.type === "status") {
           return (
             <td
               key={column.key}
-              className="
-                px-4
-                md:px-5
-                py-4
-                whitespace-nowrap
-                text-main
-              "
+              className="px-4 py-4 md:px-5 whitespace-nowrap"
             >
               <StatusBadge status={row[column.key]} />
             </td>
@@ -36,14 +20,13 @@ export default function TableRow({
           return (
             <td
               key={column.key}
-              className="
-                px-4
-                md:px-5
-                py-4
-                whitespace-nowrap
-              "
+              className="px-4 py-4 md:px-5 whitespace-nowrap"
             >
-              <ActionButtons />
+              <ActionButtons
+                onView={() => row.onView && row.onView(row)}
+                onEdit={() => row.onEdit && row.onEdit(row)}
+                onDelete={() => row.onDelete && row.onDelete(row)}
+              />
             </td>
           );
         }
@@ -51,13 +34,7 @@ export default function TableRow({
         return (
           <td
             key={column.key}
-            className="
-              px-4
-              md:px-5
-              py-4
-              whitespace-nowrap
-              text-main
-            "
+            className="px-4 py-4 md:px-5 whitespace-nowrap text-main"
           >
             {row[column.key]}
           </td>

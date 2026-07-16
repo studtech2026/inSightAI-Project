@@ -1,10 +1,6 @@
 import { motion } from "framer-motion";
 
-export default function PageHeader({
-  title,
-  subtitle,
-  action,
-}) {
+export default function PageHeader({ title, subtitle, action }) {
   return (
     <motion.div
       initial={{
@@ -57,7 +53,7 @@ export default function PageHeader({
       </div>
 
       {/* Right */}
-      {action && (
+      {/* {action && (
         <div
           className="
             w-full
@@ -70,7 +66,7 @@ export default function PageHeader({
         >
           {action}
         </div>
-      )}
+      )} */}
     </motion.div>
   );
 }

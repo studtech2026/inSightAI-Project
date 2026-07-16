@@ -2,6 +2,8 @@ import User from "../models/User.js";
 import generateToken from "../utils/generateToken.js";
 import ApiError from "../utils/ApiError.js";
 
+import activityService from "./activityService.js";
+
 class AuthService {
   /**
    * Register User
@@ -55,6 +57,12 @@ class AuthService {
     }
 
     const token = generateToken(user._id);
+
+    await activityService.addActivity(user._id, {
+      title: "User Login",
+      description: `${user.name} logged into InsightAI`,
+      type: "user",
+    });
 
     return {
       token,

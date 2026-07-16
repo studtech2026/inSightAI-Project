@@ -1,15 +1,14 @@
 import { Eye, Pencil, Trash2 } from "lucide-react";
 
 export default function ActionButtons({
-  onView,
-  onEdit,
-  onDelete,
+  onView = () => {},
+  onEdit = () => {},
+  onDelete = () => {},
 }) {
   return (
     <div className="flex items-center gap-2">
       <button
         onClick={onView}
-        title="View"
         className="
           flex
           h-9
@@ -19,10 +18,7 @@ export default function ActionButtons({
           rounded-lg
           border
           border-app
-          bg-card
-          text-secondary
-          transition
-          hover:bg-card-hover
+          hover:bg-blue-500/10
           hover:text-blue-500
         "
       >
@@ -31,7 +27,6 @@ export default function ActionButtons({
 
       <button
         onClick={onEdit}
-        title="Edit"
         className="
           flex
           h-9
@@ -41,10 +36,7 @@ export default function ActionButtons({
           rounded-lg
           border
           border-app
-          bg-card
-          text-secondary
-          transition
-          hover:bg-card-hover
+          hover:bg-violet-500/10
           hover:text-violet-500
         "
       >
@@ -53,7 +45,6 @@ export default function ActionButtons({
 
       <button
         onClick={onDelete}
-        title="Delete"
         className="
           flex
           h-9
@@ -63,12 +54,8 @@ export default function ActionButtons({
           rounded-lg
           border
           border-app
-          bg-card
-          text-secondary
-          transition
           hover:bg-red-500/10
-          hover:text-red-500
-        "
+          hover:text-red-500"
       >
         <Trash2 size={16} />
       </button>
