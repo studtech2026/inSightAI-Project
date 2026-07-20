@@ -1,16 +1,21 @@
-import React from "react";
 import PageHeader from "../../components/common/PageHeader";
 import PageTransition from "../../components/common/PageTransition";
+
 import StatCard from "../../components/dashboard/StatCard";
 import StatCardSkeleton from "../../components/dashboard/StatCardSkeleton";
-import RevenueChart from "../../components/charts/RevenueChart";
-import AIInsights from "../../components/charts/AIInsights";
 import BusinessHealth from "../../components/dashboard/BusinessHealth";
 import RecentActivity from "../../components/dashboard/RecentActivity";
 import QuickActions from "../../components/dashboard/QuickActions";
+import LowStockWidget from "../../components/dashboard/LowStockWidget";
+import NotificationWidget from "../../components/dashboard/NotificationWidget";
+import SmartInsight from "../../components/dashboard/SmartInsight";
+
+import RevenueChart from "../../components/charts/RevenueChart";
+
 import useDashboard from "../../hooks/useDashboard";
-import { revenueData } from "../../data/chartData";
+
 import { dashboardStats } from "../../data/dashboardStats";
+import { revenueData } from "../../data/chartData";
 
 export default function Dashboard() {
   const { dashboard, loading } = useDashboard();
@@ -43,34 +48,62 @@ export default function Dashboard() {
         subtitle="Monitor your business performance with real-time insights."
       />
 
-      {/* KPI */}
+      {/* KPI Cards */}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
         {loading
           ? Array.from({ length: 4 }).map((_, index) => (
               <StatCardSkeleton key={index} />
             ))
-          : stats.map((item) => <StatCard key={item.id} {...item} />)}
+          : stats.map((item) => (
+              <StatCard key={item.id} {...item} />
+            ))}
       </div>
 
-      {/* Charts */}
+      {/* Revenue + AI */}
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="mb-6 grid grid-cols-1 gap-6 xl:grid-cols-3">
         <div className="xl:col-span-2">
           <RevenueChart
-            data={dashboard ? dashboard.revenueChart : revenueData}
+            data={
+              dashboard
+                ? dashboard.revenueChart
+                : revenueData
+            }
           />
         </div>
 
-        <AIInsights />
+        <SmartInsight
+          insights={dashboard?.smartInsight || []}
+        />
       </div>
 
-      {/* Bottom */}
+      {/* Business Health + Low Stock */}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <BusinessHealth health={dashboard?.businessHealth} />
+      <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <BusinessHealth
+          health={dashboard?.businessHealth}
+        />
 
-        <RecentActivity activities={dashboard?.recentActivity} />
+        <LowStockWidget
+          products={dashboard?.lowStock || []}
+        />
+      </div>
+
+      {/* Recent Activity + Notifications */}
+
+      <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <RecentActivity
+          activities={
+            dashboard?.recentActivity || []
+          }
+        />
+
+        <NotificationWidget
+          notifications={
+            dashboard?.notifications || []
+          }
+        />
       </div>
 
       {/* Quick Actions */}
