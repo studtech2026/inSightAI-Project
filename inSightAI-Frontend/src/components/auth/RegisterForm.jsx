@@ -10,16 +10,12 @@ import AuthButton from "./AuthButton";
 import authService from "../../services/authService";
 import { login } from "../../utils/auth";
 
-import {
-  showSuccess,
-  showError,
-} from "../../utils/toast";
+import { showSuccess, showError } from "../../utils/toast";
 
 export default function RegisterForm() {
   const navigate = useNavigate();
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -31,8 +27,7 @@ export default function RegisterForm() {
   const handleChange = (e) => {
     setForm((prev) => ({
       ...prev,
-      [e.target.name]:
-        e.target.value,
+      [e.target.name]: e.target.value,
     }));
   };
 
@@ -52,45 +47,34 @@ export default function RegisterForm() {
     }
 
     if (form.password.length < 6) {
-      return showError(
-        "Password must be at least 6 characters."
-      );
+      return showError("Password must be at least 6 characters.");
     }
 
-    if (
-      form.password !==
-      form.confirmPassword
-    ) {
-      return showError(
-        "Passwords do not match."
-      );
+    if (form.password !== form.confirmPassword) {
+      return showError("Passwords do not match.");
     }
 
     try {
       setLoading(true);
 
-      const result =
-        await authService.register({
-          name: form.name,
-          email: form.email,
-          password: form.password,
-        });
+      const result = await authService.register({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+      });
 
-      login(
-        result.data.user,
-        result.data.token
-      );
+      login(result.data.user, result.data.token);
 
-      showSuccess(
-        result.message ||
-          "Registration successful."
-      );
+      showSuccess(result.message || "Registration successful.");
 
       navigate("/dashboard");
     } catch (error) {
+      console.error("Register Error:", error);
+
       showError(
         error.response?.data?.message ||
-          "Registration failed."
+          error.message ||
+          "Registration failed.",
       );
     } finally {
       setLoading(false);
@@ -113,28 +97,19 @@ export default function RegisterForm() {
             to-blue-500
           "
         >
-          <Sparkles
-            size={30}
-            className="text-white"
-          />
+          <Sparkles size={30} className="text-white" />
         </div>
       </div>
 
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-main">
-          Create Account
-        </h1>
+        <h1 className="text-3xl font-bold text-main">Create Account</h1>
 
         <p className="mt-2 text-secondary">
-          Join InsightAI and start
-          analyzing your business.
+          Join InsightAI and start analyzing your business.
         </p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-5"
-      >
+      <form onSubmit={handleSubmit} className="space-y-5">
         <AuthInput
           label="Full Name"
           id="name"
@@ -180,17 +155,13 @@ export default function RegisterForm() {
           required
         />
 
-        <AuthButton
-          type="submit"
-          loading={loading}
-        >
+        <AuthButton type="submit" loading={loading}>
           Create Account
         </AuthButton>
       </form>
 
       <p className="mt-8 text-center text-sm text-secondary">
         Already have an account?
-
         <Link
           to="/login"
           className="ml-2 text-violet-500 hover:text-violet-400"
