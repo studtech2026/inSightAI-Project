@@ -12,6 +12,7 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import searchRoutes from "./routes/searchRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import forecastRoutes from "./routes/forecastRoutes.js";
+
 import productRoutes from "./routes/productRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js";
 import inventoryRoutes from "./routes/inventoryRoutes.js";
@@ -25,42 +26,86 @@ dotenv.config();
 
 const app = express();
 
+/*
+|--------------------------------------------------------------------------
+| Global Middleware
+|--------------------------------------------------------------------------
+*/
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const allowedOrigins = [
+/*
+|--------------------------------------------------------------------------
+| CORS Configuration
+|--------------------------------------------------------------------------
+*/
+
+const localOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-  "https://insightai-project-delta.vercel.app/",
 ];
 
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin) return callback(null, true);
-
-      const normalized = origin.replace(/\/$/, "");
-
-      if (allowedOrigins.includes(normalized)) {
+      // Allow Postman / server-to-server requests
+      if (!origin) {
         return callback(null, true);
       }
 
-      console.log("Blocked Origin:", origin);
+      const normalized = origin.replace(/\/$/, "");
 
-      callback(new Error("CORS Not Allowed"));
+      const isAllowed =
+        localOrigins.includes(normalized) ||
+        normalized.endsWith(".vercel.app");
+
+      if (isAllowed) {
+        return callback(null, true);
+      }
+
+      console.log("❌ Blocked Origin:", normalized);
+
+      return callback(new Error("CORS Not Allowed"));
     },
 
     credentials: true,
+
+    methods: [
+      "GET",
+      "POST",
+      "PUT",
+      "PATCH",
+      "DELETE",
+      "OPTIONS",
+    ],
+
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+    ],
   })
 );
 
+/*
+|--------------------------------------------------------------------------
+| Health Check
+|--------------------------------------------------------------------------
+*/
+
 app.get("/", (req, res) => {
-  res.json({
+  return res.status(200).json({
     success: true,
     message: "InsightAI Backend Running 🚀",
   });
 });
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+*/
 
 app.use("/api/auth", authRoutes);
 app.use("/api/uploads", uploadRoutes);
@@ -77,7 +122,20 @@ app.use("/api/inventory", inventoryRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/user", userRoutes);
 
+/*
+|--------------------------------------------------------------------------
+| 404 Handler
+|--------------------------------------------------------------------------
+*/
+
 app.use(notFound);
+
+/*
+|--------------------------------------------------------------------------
+| Global Error Handler
+|--------------------------------------------------------------------------
+*/
+
 app.use(errorHandler);
 
 export default app;
