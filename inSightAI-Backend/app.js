@@ -32,7 +32,7 @@ app.use(cookieParser());
 const allowedOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-  "https://insightai-project-eight.vercel.app",
+  "https://insightai-project-delta.vercel.app/",
 ];
 
 app.use(
