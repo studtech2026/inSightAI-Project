@@ -3,7 +3,7 @@ import PageTransition from "../../components/common/PageTransition";
 
 import ProfileCard from "../../components/settings/ProfileCard";
 import ChangePasswordCard from "../../components/settings/ChangePasswordCard";
-import AboutCard from "../../components/settings/AboutCard";
+// import AboutCard from "../../components/settings/AboutCard";
 
 import useSettings from "../../hooks/useSettings";
 
@@ -82,9 +82,9 @@ export default function Settings() {
           onSubmit={changePassword}
         />
 
-        <div className="lg:col-span-2">
+        {/* <div className="lg:col-span-2">
           <AboutCard />
-        </div>
+        </div> */}
       </div>
     </PageTransition>
   );
