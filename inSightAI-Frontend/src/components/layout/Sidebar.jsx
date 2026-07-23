@@ -123,7 +123,7 @@ export default function Sidebar() {
           <div className="mb-2 flex justify-between text-xs text-secondary">
             <span>Storage Used</span>
 
-            <span>24%</span>
+            <span>0%</span>
           </div>
 
           <div className="h-2 overflow-hidden rounded-full bg-[var(--border)]">
@@ -136,7 +136,7 @@ export default function Sidebar() {
           </div>
 
           <p className="mt-2 text-xs text-secondary">
-            2.45 GB / 10 GB
+            0.0 GB / 10 GB
           </p>
         </div>
       </aside>
