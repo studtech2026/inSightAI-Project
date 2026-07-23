@@ -4,61 +4,77 @@ import Modal from "../common/Modal";
 import Input from "../common/Input";
 import PrimaryButton from "../common/PrimaryButton";
 
-export default function ProductModal({ open, onClose, onSubmit, product }) {
-  const [form, setForm] = useState({
-    name: "",
-    category: "",
-    price: "",
-    stock: "",
-  });
+const initialForm = {
+  name: "",
+  category: "",
+  price: "",
+  stock: "",
+  status: "In Stock",
+};
+
+export default function ProductModal({
+  open,
+  onClose,
+  onSubmit,
+  product,
+}) {
+  const [form, setForm] = useState(initialForm);
 
   useEffect(() => {
+    if (!open) return;
+
     if (product) {
       setForm({
-        name: product.name,
-        category: product.category,
-        price: product.price,
-        stock: product.stock,
-        status: product.status,
+        name: product.name || "",
+        category: product.category || "",
+        price: product.price || "",
+        stock: product.stock || "",
+        status: product.status || "In Stock",
       });
     } else {
-      setForm({
-        name: "",
-        category: "",
-        price: "",
-        stock: "",
-        status: "In Stock",
-      });
+      setForm(initialForm);
     }
-  }, [product]);
+  }, [product, open]);
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
+    setForm((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(form);
+
+    await onSubmit(form);
+
+    // Reset form after successful save
+    setForm(initialForm);
   };
 
   return (
     <Modal
       open={open}
       title={product ? "Edit Product" : "Add Product"}
-      onClose={onClose}
+      onClose={() => {
+        setForm(initialForm);
+        onClose();
+      }}
       footer={
         <>
           <button
-            onClick={onClose}
+            onClick={() => {
+              setForm(initialForm);
+              onClose();
+            }}
             className="rounded-xl border border-app px-4 py-2"
           >
             Cancel
           </button>
 
-          <PrimaryButton onClick={handleSubmit}>Save</PrimaryButton>
+          <PrimaryButton onClick={handleSubmit}>
+            Save
+          </PrimaryButton>
         </>
       }
     >
@@ -94,7 +110,9 @@ export default function ProductModal({ open, onClose, onSubmit, product }) {
         />
 
         <div>
-          <label className="mb-2 block text-sm font-medium">Status</label>
+          <label className="mb-2 block text-sm font-medium">
+            Status
+          </label>
 
           <select
             name="status"
