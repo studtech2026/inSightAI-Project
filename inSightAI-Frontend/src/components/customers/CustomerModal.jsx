@@ -4,81 +4,81 @@ import Modal from "../common/Modal";
 import Input from "../common/Input";
 import PrimaryButton from "../common/PrimaryButton";
 
+const initialForm = {
+  name: "",
+  email: "",
+  phone: "",
+  city: "",
+  totalOrders: 0,
+  totalSpent: 0,
+  status: "Active",
+};
+
 export default function CustomerModal({
   open,
   customer,
   onClose,
   onSubmit,
 }) {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    city: "",
-    totalOrders: 0,
-    totalSpent: 0,
-    status: "Active",
-  });
+  const [form, setForm] = useState(initialForm);
 
   useEffect(() => {
+    if (!open) return;
+
     if (customer) {
       setForm({
-        name: customer.name,
-        email: customer.email,
+        name: customer.name || "",
+        email: customer.email || "",
         phone: customer.phone || "",
         city: customer.city || "",
-        totalOrders: customer.totalOrders,
-        totalSpent: customer.totalSpent,
-        status: customer.status,
+        totalOrders: customer.totalOrders || 0,
+        totalSpent: customer.totalSpent || 0,
+        status: customer.status || "Active",
       });
     } else {
-      setForm({
-        name: "",
-        email: "",
-        phone: "",
-        city: "",
-        totalOrders: 0,
-        totalSpent: 0,
-        status: "Active",
-      });
+      setForm(initialForm);
     }
-  }, [customer]);
+  }, [customer, open]);
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
+    setForm((prev) => ({
+      ...prev,
       [e.target.name]: e.target.value,
-    });
+    }));
+  };
+
+  const handleSubmit = async () => {
+    await onSubmit(form);
+    setForm(initialForm);
   };
 
   return (
     <Modal
       open={open}
-      title={
-        customer
-          ? "Edit Customer"
-          : "Add Customer"
-      }
-      onClose={onClose}
+      title={customer ? "Edit Customer" : "Add Customer"}
+      onClose={() => {
+        setForm(initialForm);
+        onClose();
+      }}
       footer={
         <>
           <button
-            onClick={onClose}
+            onClick={() => {
+              setForm(initialForm);
+              onClose();
+            }}
             className="rounded-xl border border-app px-4 py-2"
           >
             Cancel
           </button>
 
-          <PrimaryButton
-            onClick={() => onSubmit(form)}
-          >
+          <PrimaryButton onClick={handleSubmit}>
             Save
           </PrimaryButton>
         </>
       }
     >
       <div className="space-y-4">
-
         <Input
           label="Customer Name"
           name="name"
@@ -138,7 +138,6 @@ export default function CustomerModal({
             <option>Inactive</option>
           </select>
         </div>
-
       </div>
     </Modal>
   );
