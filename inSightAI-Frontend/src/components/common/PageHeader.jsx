@@ -53,7 +53,7 @@ export default function PageHeader({ title, subtitle, action }) {
       </div>
 
       {/* Right */}
-      {/* {action && (
+       {action && (
         <div
           className="
             w-full
@@ -66,7 +66,7 @@ export default function PageHeader({ title, subtitle, action }) {
         >
           {action}
         </div>
-      )} */}
+      )} 
     </motion.div>
   );
 }
